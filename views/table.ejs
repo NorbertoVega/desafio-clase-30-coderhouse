@@ -1,0 +1,29 @@
+<% if (emptyList) { %>
+    <h2 style="margin-top: 30px; margin-bottom: 30px;">No hay productos</h2>
+    <% } else { %>
+        <% if (faker) { %>
+            <h3 class="title-form">Lista de Productos Faker</h3>
+        <% } else { %>
+            <h3 class="title-form">Lista de Productos</h3>
+        <% } %>
+<table class="table table-hover table-margin">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Thumbnail</th>
+        </tr>
+    </thead>
+    <tbody id="tbody" >
+        <% for (let i = 0; i < productList.length; i++) { %>
+        <tr>
+            <th scope="row"><%=productList[i].id%></th>
+            <td><%=productList[i].title%></td>
+            <td><%=productList[i].price%></td>
+            <td><img src="<%=productList[i].thumbnail%>" alt="imagen de producto" class="img-size"></td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>
+<% } %>

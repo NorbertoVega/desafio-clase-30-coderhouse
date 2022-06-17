@@ -1,0 +1,111 @@
+/*** Comandos ***/
+
+/* Instalación de nodemon, forever y pm2 */
+npm install -g nodemon
+npm i -g forever
+npm i pm2 -g
+
+/** Comandos para correr el proyecto con nodemon **/
+nodemon server.js --port 3000
+nodemon server.js --port 3000 --modo fork
+nodemon server.js --port 3000 --modo cluster
+
+probar con endpoint: http://localhost:3000/api/info
+tener en cuenta que en /public/scripts/config.js la variable PORT debe tener el mismo valor que el puerto elegido
+
+/** Comandos para correr el proyecto con forever **/
+forever start -w server.js --port 3000
+forever start -w server.js --port 3000 --modo fork
+forever start -w server.js --port 3000 --modo cluster
+
+forever list
+forever stopall
+
+probar con endpoint: http://localhost:3000/info.html
+tener en cuenta que en /public/scripts/config.js la variable PORT debe tener el mismo valor que el puerto elegido
+
+/** Comandos para correr el proyecto con pm2 **/
+pm2 start server.js --name="Server1" --watch -- --port 3000
+pm2 start server.js --name="Server2" --watch -i max -- --port 3000
+
+pm2 stop server.js
+pm2 delete server.js
+
+probar con endpoint: http://localhost:3000/info.html
+tener en cuenta que en /public/scripts/config.js la variable PORT debe tener el mismo valor que el puerto elegido
+
+/* Instalación de NginX en Ubuntu */
+sudo apt update
+sudo apt install nginx
+sudo ufw app list
+sudo ufw allow 'Nginx HTTP'
+
+/* Guía para modificar nginx.conf en Ubuntu */
+Abrir una terminal y moverse a: /etc/nginx
+sudo gedit nginx.conf
+modificar nginx.conf y guardar
+detener e iniciar de nuevo el servicio (hacer esto siempre luego de modificar nginx.conf si el servicio ya estaba iniciado): sudo systemctl reload nginx
+
+/** Comandos para correr el proyecto con NginX **/
+
+/* Consigna 1 NginX */
+Redirigir todas las consultas a /api/randoms a un cluster de servidores escuchando en el puerto
+8081. El cluster será creado desde node utilizando el módulo nativo cluster.
+El resto de las consultas, redirigirlas a un servidor individual escuchando en el puerto 8080
+
+Paso 1: modificar nginx.conf (ver guía), reemplazar el contenido de este archivo por el de conf1.txt.
+
+Paso 2: iniciar Nginx
+sudo systemctl start nginx
+
+Paso 3: con pm2 correr estos comandos en una terminal (moviendose a la carpeta donde está el proyecto)
+pm2 start server.js --name="Server1" --watch -- --port 8080
+pm2 start server.js --name="Server2" --watch -- --port 8081 --modo cluster
+
+Paso 4: en /public/scripts/config.js la variable PORT debe tener el valor 8000
+
+Paso 5: pruebas. Para ver que redirige usar las siguientes rutas
+http://localhost:8000/api/info
+http://localhost:8000/api/randoms
+
+Paso 6: frenar y borrar las instancias de server.js
+pm2 stop server.js
+pm2 delete server.js
+pm2 list (para checkear que no quede nada corriendo)
+
+/* Consigna 2 NginX */
+Modiﬁcar la conﬁguración para que todas las consultas a /api/randoms sean redirigidas a
+un cluster de servidores gestionado desde nginx, repartiéndolas equitativamente entre 4
+instancias escuchando en los puertos 8082, 8083, 8084 y 8085 respectivamente.
+
+Paso 1: modificar nginx.conf (ver guía), reemplazar el contenido de este archivo por el de conf2.txt.
+
+Paso 2: recargar NginX con el comando: sudo systemctl reload nginx
+
+Paso 3: con pm2 correr estos comandos en una terminal (moviendose a la carpeta donde está el proyecto)
+pm2 start server.js --name="ServerA" --watch -- --port 8080
+pm2 start server.js --name="ServerB" --watch -- --port 8082
+pm2 start server.js --name="ServerC" --watch -- --port 8083
+pm2 start server.js --name="ServerD" --watch -- --port 8084
+pm2 start server.js --name="ServerE" --watch -- --port 8085
+
+Paso 4: en /public/scripts/config.js la variable PORT debe tener el valor 8000
+
+Paso 5: pruebas. Para ver que redirige usar las siguientes rutas
+http://localhost:8000/api/info
+http://localhost:8000/api/randoms
+
+Paso 6: frenar y borrar las instancias de server.js
+pm2 stop server.js
+pm2 delete server.js
+pm2 list (para checkear que no quede nada corriendo)
+
+Paso 7: detener el servicio NginX
+sudo systemctl stop nginx
+
+
+
+
+
+
+

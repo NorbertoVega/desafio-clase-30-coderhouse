@@ -1,0 +1,29 @@
+events {
+
+}
+
+http {
+    include mime.types;
+    default_type application/octet-stream;
+    
+    upstream node_app {
+        server 127.0.0.1:8080;
+    }
+	
+	upstream cluster_random {
+        server 127.0.0.1:8081;
+    }
+	
+	server {
+		listen 8000;
+		server_name nginx_node;
+
+		location / {
+			proxy_pass http://node_app;
+		}
+
+		location /api/randoms {
+			proxy_pass http://cluster_random;
+		}		
+	}
+}

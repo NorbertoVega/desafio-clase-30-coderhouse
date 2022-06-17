@@ -1,0 +1,9 @@
+Para correr el proyecto:
+1- Hacer un npm install.
+2- En Mysql Workbench ejecutar(luego de levantar con XAMPP Mysql):
+          create database ecommerce;
+con esto creamos la base de datos.
+3- Ejecutar: node .\src\utils\crear_tabla_productos.utils.js
+para agregar algunos datos a la tabla productos.
+4-Ejecutar el proyecto: node .\server.js
+
